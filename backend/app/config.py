@@ -25,8 +25,8 @@ class Settings(BaseSettings):
     allowed_origins: str = "http://localhost:3000"
 
     # Ingestions (inputs)
-    max_upload_mb = int = 10
-    max_pdf_pages = int = 150
+    max_upload_mb: int = 10
+    max_pdf_pages: int = 150
     chunk_size_words: int = 350      # ~500 tokens
     chunk_overlap_words: int = 50
 
