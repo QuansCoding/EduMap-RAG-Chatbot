@@ -16,7 +16,7 @@ R = TypeVar("R")
 
 RETRYABLE_STATUS_CODES = {429,500,502,503,504}
 
-class GeminiProvider(AIProviderError):
+class GeminiProvider(AIProvider):
     EMBED_BATCH_SIZE = 20  # chunks per embedding request
     MAX_RETRIES = 4
 
@@ -46,7 +46,7 @@ class GeminiProvider(AIProviderError):
         result = self._with_retry(
             lambda: self._client.models.embed_content(
                 model=self._embedding_model,
-                content=contents,
+                contents=contents,
                 config=types.EmbedContentConfig(output_dimensionality=self._dimensions),
             )
         )

@@ -5,6 +5,8 @@ INVITE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 
 def generate_invite_code(length: int = 8) -> str:
     """Cyptographically secure random code. 31^8 ~ 850 billion possibilities"""
+    # FIX: the body was missing entirely, so this returned None for every invite.
+    return "".join(secrets.choice(INVITE_ALPHABET) for _ in range(length))
 
 def normalize_invite_code(code: str) -> str:
     return code.strip().upper().replace(" ", "").replace("-","")

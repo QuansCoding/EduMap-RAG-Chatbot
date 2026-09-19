@@ -36,7 +36,8 @@ def check_and_record_usage(conn: Connection, user: CurrentUser, kind: str) -> No
     if row["mine"] >= user_limit:
         raise HTTPException(
             status.HTTP_429_TOO_MANY_REQUESTS,
-            f"Daily{kind} limit reached ({user_limit} per 24 hours). Please try again later.",
+            # FIX: missing space produced "Dailychat limit reached".
+            f"Daily {kind} limit reached ({user_limit} per 24 hours). Please try again later.",
         )
     if row["total"] >= settings.global_daily_ai_limit:
         raise HTTPException(
@@ -44,5 +45,6 @@ def check_and_record_usage(conn: Connection, user: CurrentUser, kind: str) -> No
             "EduMap has reached its daily AI budget. Please try again tomorrow.",
         )
 
-    conn.execute("INSERT INTO user_events (user_id, kind) VALUES (%s, %s)", (user.id, kind))
+    # FIX: inserted into user_events; the table (and the SELECT above) is usage_events.
+    conn.execute("INSERT INTO usage_events (user_id, kind) VALUES (%s, %s)", (user.id, kind))
     
