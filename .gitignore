@@ -1,5 +1,5 @@
 # Secrets
-backend\backend.env
+*.env
 .env
 .env.local
 .env.*.local
