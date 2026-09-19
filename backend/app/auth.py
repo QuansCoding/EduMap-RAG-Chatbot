@@ -25,8 +25,9 @@ def _get_jwks_client() -> jwt.PyJWKClient:
     """
     global _jwks_client
     if _jwks_client is None:
-     jwks_url = f"{get_settings().supabase_url.rstrip('/')}/auth/v1.well-known/jwks.json"
-     _jwks_client = jwt.PyJWKClient(jwks_url, cache_keys=True, lifespan=3600)
+        # FIX: was "/auth/v1.well-known/..." — the missing slash 404s, so no token ever verifies.
+        jwks_url = f"{get_settings().supabase_url.rstrip('/')}/auth/v1/.well-known/jwks.json"
+        _jwks_client = jwt.PyJWKClient(jwks_url, cache_keys=True, lifespan=3600)
     return _jwks_client
 
 
@@ -41,7 +42,8 @@ def decode_supabase_token(token: str) -> dict:
       signing_key.key,
       algorithms=["ES256", "RS256"],  # asymmetric only; will nevery accept "none" or HS256
       audience="authenticated",       # Supabase sets aud="authenticated" for signed-in users
-      issuer=f"{settings.supabase_url.strip('/')}/auth/v1",
+      # FIX: strip('/') -> rstrip('/'); we only want to drop a trailing slash.
+      issuer=f"{settings.supabase_url.rstrip('/')}/auth/v1",
    )
 
 def get_current_user(
@@ -53,7 +55,9 @@ def get_current_user(
 
    try:
       claims = decode_supabase_token(credentials.credentials)
-   except:
+   # FIX: was a bare `except:`, which also swallowed real bugs (and Ctrl-C) and
+   # reported every one of them as a 401. Catch only token errors.
+   except jwt.PyJWTError:
       # Don't leak the *why* (expired? forged?) as it helps attackers
       raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired token")
 

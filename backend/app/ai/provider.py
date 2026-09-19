@@ -13,7 +13,9 @@ class AIProvider(ABC):
     Python refuses to instantiate a subclass that doesn't"""
 
     @abstractmethod
-    def embed_documents(self, text: list[str], title: str | None = None) -> list[list[float]]:
+    # FIX: parameter was named `text`; GeminiProvider implements it as `texts`.
+    # Mismatched names break any keyword call and defeat the point of the interface.
+    def embed_documents(self, texts: list[str], title: str | None = None) -> list[list[float]]:
         """Embed chunk of a document for storgae. Returns one vector per text in the same order."""
 
     @abstractmethod
@@ -21,7 +23,7 @@ class AIProvider(ABC):
         """Embed a search query"""
 
     @abstractmethod
-    def generate_text(self, system: str, promt: str) -> str:
+    def generate_text(self, system: str, prompt: str) -> str:  # FIX: was `promt`.
         """Free-form text generation."""
 
     @abstractmethod
