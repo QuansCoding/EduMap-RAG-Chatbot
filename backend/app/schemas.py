@@ -17,5 +17,5 @@ class SendMessageRequest(BaseModel):
 class GenerateRoadmapRequest(BaseModel):
     document_id: UUID
 
-class ProgramRequest(BaseModel):
+class ProgressRequest(BaseModel):  # FIX: was ProgramRequest; the roadmap router imports ProgressRequest.
     completed: bool
